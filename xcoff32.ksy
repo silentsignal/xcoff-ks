@@ -87,6 +87,8 @@ types:
   section_header:
     seq:
       - id: s_name
+        type: strz
+        encoding: ASCII
         size: 8
       - id: s_paddr
         type: u4
@@ -111,6 +113,34 @@ types:
         io: _root._io
         pos: s_scnptr
         size: s_size
+        type: 
+          switch-on: s_name
+          cases:
+            '".loader"': loader_section
+            _ : common_section
+  loader_section:
+    seq:
+      - id: l_version
+        type: u4
+      - id: l_nsyms
+        type: u4
+      - id: l_nreloc
+        type: u4
+      - id: l_istlen
+        type: u4
+      - id: l_nimpid
+        type: u4
+      - id: l_impoff
+        type: u4
+      - id: l_stlen
+        type: u4
+      - id: l_stoff
+        type: u4
+  common_section:
+    seq:
+      - id: body
+        size: _parent.s_size
+    
 instances:
   section_headers:
     pos: 92
