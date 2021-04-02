@@ -140,11 +140,50 @@ types:
         type: u4
       - id: l_stoff
         type: u4
+      - id: symbol_table # We need this to open a new stream for l_name
+        type: symbol_table
+        size: l_nsyms*24
   common_section:
     seq:
       - id: body
         size: _parent.s_size
-    
+  symbol_table:
+    seq:
+      - id: symbol_entries
+        type: symbol_entry
+        size: 24
+        repeat: expr
+        repeat-expr: _parent.l_nsyms
+  symbol_entry:
+    seq:
+      - id: name_structure
+        type: symbol_name
+        size: 8 
+      - id: l_value
+        type: u4
+      - id: l_scnum
+        type: u2
+      - id: l_smtype
+        type: u1
+      - id: l_smclas
+        type: u1
+      - id: l_ifile
+        type: u4
+      - id: l_param
+        type: u4
+  symbol_name:
+    seq:
+      - id: l_zeroes
+        type: u4
+      - id: l_offset
+        type: u4
+    instances:
+      l_name:
+        pos: 0
+        type: strz
+        encoding: ASCII
+        size: 8
+        
 instances:
   section_headers:
     pos: 92
