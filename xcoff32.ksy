@@ -109,7 +109,7 @@ types:
       - id: s_flags
         type: u2
     instances:
-      body:
+      subsection:
         io: _root._io
         pos: s_scnptr
         size: s_size
@@ -118,6 +118,10 @@ types:
           cases:
             '".loader"': loader_section
             _ : common_section
+      body:
+        io: _root._io
+        pos: s_scnptr
+        size: s_size
   loader_section:
     seq:
       - id: l_version
