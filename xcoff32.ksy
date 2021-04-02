@@ -142,7 +142,11 @@ types:
         type: u4
       - id: symbol_table # We need this to open a new stream for l_name
         type: symbol_table
-        size: l_nsyms*24
+      - id: reloc_table
+        type: relocation_table
+      - id: import_table
+        type: import_table
+        size: l_istlen
   common_section:
     seq:
       - id: body
@@ -183,7 +187,40 @@ types:
         type: strz
         encoding: ASCII
         size: 8
-        
+  relocation_table:
+    seq:
+      - id: relocation_entries
+        type: relocation_entry
+        repeat: expr
+        repeat-expr: _parent.l_nreloc
+  relocation_entry:
+    seq:
+      - id: l_vaddr
+        type: u4
+      - id: l_symndx
+        type: u4
+      #- id: l_rtype # TODO
+      #  type: u4
+      - id: l_value
+        type: u2
+      - id: l_rsecnm
+        type: u2
+  import_table:
+    seq:
+      - id: import_entries
+        type: import_entry
+        repeat: eos
+  import_entry:
+    seq:
+      - id: l_impidpath
+        type: strz
+        encoding: ASCII
+      - id: l_impidbase
+        type: strz
+        encoding: ASCII
+      - id: l_impidmem
+        type: strz
+        encoding: ASCII        
 instances:
   section_headers:
     pos: 92
