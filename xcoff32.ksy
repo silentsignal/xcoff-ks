@@ -1,6 +1,7 @@
 meta:
   id: xcoff32
   endian: be
+doc-ref: https://www.ibm.com/docs/en/aix/7.2?topic=formats-xcoff-object-file-format
 seq:
   - id: header
     type: header
@@ -147,6 +148,9 @@ types:
       - id: import_table
         type: import_table
         size: l_istlen
+      - id: string_table
+        type: string_table
+        size: l_stlen
   common_section:
     seq:
       - id: body
@@ -158,6 +162,23 @@ types:
         size: 24
         repeat: expr
         repeat-expr: _parent.l_nsyms
+  string_table:
+    seq:
+      - id: string_entries
+        type: string_entry
+        repeat: eos
+    instances:
+      body:
+        pos: 0
+        size: _parent.l_stlen
+  string_entry:
+    seq:
+      - id: strlen
+        type: u2
+      - id: str
+        type: strz
+        encoding: ASCII
+        size: strlen
   symbol_entry:
     seq:
       - id: name_structure
@@ -187,6 +208,12 @@ types:
         type: strz
         encoding: ASCII
         size: 8
+      l_strname:
+        io: _parent._parent._parent.string_table._io
+        pos:  l_offset
+        type: strz
+        encoding: ASCII
+        if: l_zeroes == 0
   relocation_table:
     seq:
       - id: relocation_entries
