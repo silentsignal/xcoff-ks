@@ -7,6 +7,11 @@ seq:
     type: header
   - id: auxiliary_header
     type: auxiliary_header
+  - id: section_headers
+    type: section_header
+    size: 40
+    repeat: expr
+    repeat-expr: header.f_nscns
 types:
   header:
     seq:
@@ -107,22 +112,26 @@ types:
         type: u2
       - id: s_nlnno
         type: u2
-      - id: s_flags
+      - id: s_dummy # Wrong documentation, see also: https://go.googlesource.com/go/+/go1.16.2/src/internal/xcoff/xcoff.go
         type: u2
+      - id: s_flags
+        type: u2    
     instances:
       subsection:
         io: _root._io
         pos: s_scnptr
         size: s_size
         type: 
-          switch-on: s_name
+          switch-on: s_flags # TODO need an enum or something... https://github.com/kaitai-io/kaitai_struct/issues/597
           cases:
-            '".loader"': loader_section
+            0x1000: loader_section 
             _ : common_section
+        if: s_scnptr != 0
       body:
         io: _root._io
         pos: s_scnptr
         size: s_size
+        if: s_scnptr != 0
   loader_section:
     seq:
       - id: l_version
@@ -167,10 +176,6 @@ types:
       - id: string_entries
         type: string_entry
         repeat: eos
-    instances:
-      body:
-        pos: 0
-        size: _parent.l_stlen
   string_entry:
     seq:
       - id: strlen
@@ -248,11 +253,5 @@ types:
       - id: l_impidmem
         type: strz
         encoding: ASCII        
-instances:
-  section_headers:
-    pos: 92
-    size: 40
-    repeat: expr
-    repeat-expr: header.f_nscns
-    type: section_header
+
   
