@@ -264,18 +264,6 @@ types:
         pos: l_rldoff
         type: relocation_table
         if: l_rldoff != 0
-
-      # TODO
-      #- id: symbol_table 
-      #  type: symbol_table
-      #- id: reloc_table
-      #  type: relocation_table
-      #- id: import_table
-      #  type: import_table
-      #  size: l_istlen
-      #- id: string_table
-      #  type: string_table
-      #  size: l_stlen
   common_section:
     seq:
       - id: body
