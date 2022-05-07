@@ -118,8 +118,10 @@ types:
         type: u4
       - id: s_nlnno 
         type: u4
+      - id: s_flags_dwraf # Need to split this u4 so we can switch() on the value in Java
+        type: u2  
       - id: s_flags
-        type: u4    
+        type: u2   
       - id: spad # See : https://go.googlesource.com/go/+/go1.16.2/src/internal/xcoff/xcoff.go
         type: u4
     instances:
@@ -138,6 +140,25 @@ types:
         pos: s_scnptr
         size: s_size
         if: s_scnptr != 0
+    enums:
+      section_flags: # "The low-order 16 bits specify the primary section type. Only a single bit should be set in the low-order 16 bits."
+        0x0: styp_reserved0
+        0x1: styp_reserved1
+        0x2: styp_reserved2
+        0x4: styp_reserved4
+        0x8: styp_pad
+        0x10: styp_dwarf
+        0x20: styp_text
+        0x40: styp_data
+        0x80: styp_bss
+        0x100: styp_except
+        0x200: styp_info
+        0x400: styp_tdata
+        0x800: styp_tbss
+        0x1000: styp_loader
+        0x2000: styp_debug
+        0x4000: styp_typchk
+        0x8000: styp_ovrflo
   symbol_table:
     seq:
       - id: symbol_entries
@@ -167,7 +188,7 @@ types:
       - id: l_scnum
         type: u2
       - id: l_smtype
-        type: u1
+        type: symbol_type
       - id: l_smclas
         type: u1
       - id: l_ifile
@@ -184,6 +205,20 @@ types:
         pos:  l_offset
         type: strz
         encoding: ASCII
+  symbol_type:
+    seq:
+      - id: sym_reserved0
+        type: b1
+      - id: sym_imported
+        type: b1
+      - id: sym_entrypoint
+        type: b1
+      - id: sym_exported
+        type: b1
+      - id: sym_weak
+        type: b1
+      - id: sym_type
+        type: b3
   import_table:
     seq:
       - id: import_entries
