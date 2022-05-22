@@ -163,6 +163,34 @@ types:
         0x2000: styp_debug
         0x4000: styp_typchk
         0x8000: styp_ovrflo
+  file_symbol_table:
+    seq:
+      - id: symbol_entries
+        type: file_symbol_entry
+        repeat: eos
+  file_symbol_entry:
+    seq:
+      - id: n_value
+        type: u8
+      - id: n_offset
+        type: u4
+      - id: n_scnum
+        type: u2
+      - id: n_type
+        type: u2
+      - id: n_sclass
+        type: u1
+      - id: n_numaux
+        type: u1
+      - id: aux_entries
+        type: file_aux_sym_entry_dummy
+        if: n_numaux > 0
+        repeat: expr
+        repeat-expr: n_numaux
+  file_aux_sym_entry_dummy:
+    seq:
+      - id: dummy
+        size: 18
   symbol_table:
     seq:
       - id: symbol_entries
@@ -323,3 +351,9 @@ types:
     seq:
       - id: body
         size: _parent.s_size
+instances:
+  symbol_table:
+    io: _io
+    pos: header.f_symptr
+    type: file_symbol_table
+    size: header.f_nsyms*18
