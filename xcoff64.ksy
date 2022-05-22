@@ -140,6 +140,10 @@ types:
         pos: s_scnptr
         size: s_size
         if: s_scnptr != 0
+      relocation_table:
+        io: _root._io
+        pos: s_relptr
+        type: section_relocation_table
     enums:
       section_flags: # "The low-order 16 bits specify the primary section type. Only a single bit should be set in the low-order 16 bits."
         0x0: styp_reserved0
@@ -236,13 +240,19 @@ types:
       - id: l_impidmem
         type: strz
         encoding: ASCII 
-  relocation_table:
+  loader_relocation_table:
+    seq:
+      - id: relocation_entries
+        type: loader_relocation_entry
+        repeat: expr
+        repeat-expr: _parent.l_nreloc
+  section_relocation_table:
     seq:
       - id: relocation_entries
         type: relocation_entry
         repeat: expr
-        repeat-expr: _parent.l_nreloc
-  relocation_entry:
+        repeat-expr: _parent.s_nreloc
+  loader_relocation_entry:
     seq:
       - id: l_vaddr
         type: u8
@@ -254,6 +264,16 @@ types:
         type: u4
       - id: l_rtype # TODO
         type: u4
+  relocation_entry:
+    seq:
+      - id: r_vaddr
+        type: u8
+      - id: r_symndx
+        type: u4
+      - id: r_size
+        type: u1
+      - id: r_rtype
+        type: u1
   loader_section:
     seq:
       - id: l_version
@@ -297,7 +317,7 @@ types:
       l_reloc_table:
         io: _io
         pos: l_rldoff
-        type: relocation_table
+        type: loader_relocation_table
         if: l_rldoff != 0
   common_section:
     seq:
