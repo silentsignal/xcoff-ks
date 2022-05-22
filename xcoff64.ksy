@@ -184,13 +184,76 @@ types:
         type: u1
       - id: aux_entries
         type: file_aux_sym_entry_dummy
-        if: n_numaux > 0
         repeat: expr
         repeat-expr: n_numaux
   file_aux_sym_entry_dummy:
     seq:
       - id: dummy
         size: 18
+  file_aux_sym_entry_file:
+    seq:
+      - id: dummy # TODO This section of the docs is messed up
+        size: 18
+  file_aux_sym_entry_csect:
+    seq:
+      - id: x_sclen_lo
+        type: u4
+      - id: x_parmhash
+        type: u4
+      - id: x_snhash
+        type: u2
+      - id: x_smtyp
+        type: u1
+      - id: x_smclass
+        type: u1
+      - id: x_sclen_hi
+        type: u1
+      - id: padding
+        type: u1
+      - id: x_auxtype
+        type: u1
+  file_aux_sym_entry_function:
+    seq:
+      - id: x_lnnoptr
+        type: u8
+      - id: x_fsize
+        type: u4
+      - id: x_endndx
+        type: u4
+      - id: padding
+        type: u1
+      - id: x_auxtype
+        type: u1 
+  file_aux_sym_entry_exception:
+    seq:
+      - id: x_exptr
+        type: u8
+      - id: x_fize
+        type: u4
+      - id: x_endndx
+        type: u4
+      - id: padding
+        type: u1
+      - id: x_auxtype
+        type: u1
+  file_aux_sym_entry_block:
+    seq:
+      - id: x_lnno
+        type: u4
+      - id: reserved
+        size: 13
+      - id: x_auxtype
+        type: u1
+  file_aux_sym_entry_section:
+    seq:
+      - id: x_sclen
+        type: u4
+      - id: x_nreloc
+        type: u2
+      - id: x_nlinno
+        type: u2
+      - id: reserved
+        size: 10
   symbol_table:
     seq:
       - id: symbol_entries
@@ -356,4 +419,4 @@ instances:
     io: _io
     pos: header.f_symptr
     type: file_symbol_table
-    size: header.f_nsyms*18
+    size: header.f_nsyms*18 # Symbol entries and aux. entries are always 18 bytes long
